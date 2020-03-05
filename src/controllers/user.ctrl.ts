@@ -1,18 +1,16 @@
-import { Request, Response } from 'express';
-import { default as UserService } from '../services/user.srvc';
+import { Request, Response } from "express";
+import { UserService } from "../services";
 
-class UserController {
-  async getAll(req: Request, resp: Response) {
-    try {
-      const users = await UserService.findAll();
-      resp.status(200).send(users);
-    } catch (error) {
-      resp.send({
-        msg: 'Not found',
-        status: 404
-      });
-    }
+export const getAll = async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.findAll();
+    res.status(200).send(users);
+  } catch (error) {
+    res.send({
+      msg: "Not found",
+      status: 404
+    });
   }
-}
+};
 
-export default new UserController();
+export default { getAll };
