@@ -1,15 +1,15 @@
-import { User } from "../models/user";
-import * as bcrypt from "bcrypt-nodejs";
-import * as util from "util";
-import UserRepository, { UserType } from "../schemas/user.schema";
+import { User } from '../models/user';
+import * as bcrypt from 'bcrypt-nodejs';
+import * as util from 'util';
+import UserRepository from '../schemas/user.schema';
 
 /**
  * @description Fetches single user from the storage by email
  * @param email
  * @returns {Promise<User>}
  */
-export const findByEmail = async (email): Promise<User> => {
-  const user: UserType = await UserRepository.findOne({ email: email });
+export const findByEmail = async (email: string): Promise<User> => {
+  const user = (await UserRepository.findOne({ email })) as User;
   return user;
 };
 
@@ -19,10 +19,13 @@ export const findByEmail = async (email): Promise<User> => {
  * @param email
  * @returns {Promise<User>}
  */
-export const findByUsernameOrEmail = async (username, email): Promise<User> => {
-  const user: User = await UserRepository.findOne({
-    $or: [{ email: email }, { username: username }]
-  });
+export const findByUsernameOrEmail = async (
+  email: string,
+  username?: string,
+): Promise<User> => {
+  const user = (await UserRepository.findOne({
+    $or: [{ email }, { username }],
+  })) as User;
   return user;
 };
 
@@ -40,12 +43,12 @@ export const save = async (user: User): Promise<User> => {
  * @param activationToken
  * @returns {Promise<User>}
  */
-export const findOneAndUpdate = async (activationToken): Promise<User> => {
-  const user: User = await UserRepository.findOneAndUpdate(
+export const findOneAndUpdate = async (activationToken: string): Promise<User> => {
+  const user = (await UserRepository.findOneAndUpdate(
     { activationToken: activationToken },
     { active: true },
-    { new: true }
-  );
+    { new: true },
+  )) as User;
   return user;
 };
 
@@ -73,9 +76,9 @@ export const deleteOne = async (username: string): Promise<void> => {
  */
 export const comparePassword = (
   candidatePassword: string,
-  storedPassword
-): boolean => {
-  const qCompare = (util as any).promisify(bcrypt.compare);
+  storedPassword: string,
+): Promise<boolean> => {
+  const qCompare = util.promisify(bcrypt.compare);
   return qCompare(candidatePassword, storedPassword);
 };
 
@@ -86,5 +89,5 @@ export default {
   findOneAndUpdate,
   findAll,
   deleteOne,
-  comparePassword
+  comparePassword,
 };

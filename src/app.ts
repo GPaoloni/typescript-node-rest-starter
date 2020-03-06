@@ -1,10 +1,9 @@
 import * as express from 'express';
-import * as compression from 'compression';  // compresses requests
+import * as compression from 'compression'; // compresses requests
 import * as session from 'express-session';
 import * as bodyParser from 'body-parser';
 import * as logger from 'morgan';
 import * as lusca from 'lusca';
-import * as dotenv from 'dotenv';
 import * as mongo from 'connect-mongo';
 import * as mongoose from 'mongoose';
 import * as bluebird from 'bluebird';
@@ -12,62 +11,78 @@ import * as expressJwt from 'express-jwt';
 import * as swaggerUI from 'swagger-ui-express';
 import * as swaggerDocument from '../swagger.json';
 import { AuthRouter, SwaggerAPIRouter, UserRouter } from './routes';
+import config from './config';
 
 const MongoStore = mongo(session);
-
-// Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({path: '.env' || '.env.example'});
 
 // Create Express server
 const app = express();
 
 // Connect to MongoDB
-const mongoUrl = process.env.MONGODB_URI;
-(<any>mongoose).Promise = bluebird;
-mongoose.connect(mongoUrl, {useMongoClient: true}).then(
-  () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
-  },
-).catch(err => {
-  console.log('MongoDB connection error. Please make sure MongoDB is running. ' + err);
-  // process.exit();
-});
+const mongoUrl = config.MONGODB_URI;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(mongoose as any).Promise = bluebird;
+
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useNewUrlParser', true);
+
+mongoose
+  .connect(mongoUrl)
+  .then(() => {
+    /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
+  })
+  .catch((err: any) => {
+    console.log('MongoDB connection error. Please make sure MongoDB is running. ' + err);
+    // process.exit();
+  });
 
 // Express configuration
-app.set('port', process.env.PORT || 3000);
 app.use(compression());
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(session({
-  resave: true,
-  saveUninitialized: true,
-  secret: process.env.SESSION_SECRET,
-  store: new MongoStore({
-    url: mongoUrl,
-    autoReconnect: true
-  })
-}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: true,
+    secret: config.SESSION_SECRET,
+    store: new MongoStore({
+      url: mongoUrl,
+      autoReconnect: true,
+    }),
+  }),
+);
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 
-app.use(expressJwt({
-    secret: process.env.JWT_SECRET,
+app.use(
+  expressJwt({
+    secret: config.JWT_SECRET,
     requestProperty: 'auth',
     getToken: function fromHeader(req: express.Request) {
       const tokenHeader = req.headers.Authorization || req.headers.authorization;
       if (tokenHeader && (tokenHeader as string).split(' ')[0] === 'Bearer') {
         return (tokenHeader as string).split(' ')[1];
       }
-    }
-  })
-    .unless({path: [/\/api-docs\//g, {url: '/', method: 'OPTIONS'}, /\/auth\//g]})
+    },
+  }).unless({
+    path: [/\/api-docs\//g, { url: '/', method: 'OPTIONS' }, /\/auth\//g],
+  }),
 );
 
-app.use(function (err, req, res, next) {
+app.use(function(
+  err: any,
+  req: express.Request,
+  res: express.Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: express.NextFunction,
+) {
   if (err.name === 'UnauthorizedError') {
     res.status(401).send({
       msg: 'Invalid or no token supplied',
-      code: 401
+      code: 401,
     });
   }
 });
@@ -82,8 +97,8 @@ app.use('/api/v1', SwaggerAPIRouter);
 
 app.use((req: express.Request, resp: express.Response) => {
   resp.status(404).send({
-    msg: 'Not Found!'
+    msg: 'Not Found!',
   });
 });
 
-module.exports = app;
+export default app;

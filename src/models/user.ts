@@ -2,10 +2,9 @@ import { AuthToken } from './auth-token';
 import { Profile } from './profile';
 
 export interface User {
-
-  email?: string;
+  email: string;
+  password: string;
   username?: string;
-  password?: string;
   role?: string;
 
   active?: boolean;
@@ -19,4 +18,6 @@ export interface User {
   tokens?: Array<AuthToken>;
 
   profile?: Profile;
+
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
 }

@@ -1,19 +1,26 @@
-import * as request from 'supertest';
-import * as app from '../src/app';
+import * as chai from 'chai';
+import chaiHttp = require('chai-http');
+import * as app from '../src/server';
 import { default as UserService } from '../src/services/user.srvc';
 import { User } from '../src/models/user';
 
-let JWT: String;
+chai.use(chaiHttp);
+const request = chai.request;
+const { expect } = chai;
 
-afterAll((done) => {
-  UserService.deleteOne('testerchester')
-    .then(done);
+let JWT: string;
+
+afterAll(done => {
+  UserService.deleteOne('testerchester').then(done);
 });
 
 describe('GET /random-url', () => {
-  it('should return 401', (done) => {
-    request(app).get('/reset')
-      .expect(401, done);
+  it('should return 401', async () => {
+    request(app)
+      .get('/reset')
+      .end((err, res) => {
+        expect(res).to.have.status(401);
+      });
   });
 });
 
@@ -25,83 +32,111 @@ describe('/auth', () => {
     lname: 'Tester',
     fname: 'Chester',
     role: 'guest',
-    username: 'testerchester'
+    username: 'testerchester',
   };
 
   describe('POST /register', () => {
-    const route: string = '/auth/register';
+    const route = '/auth/register';
 
-    it('should return 200', (done) => {
-      request(app).post(route)
+    it('should return 200', async () => {
+      request(app)
+        .post(route)
         .send(userForm)
-        .then(res => {
-          user = res.body;
-          expect(res.status).toEqual(200);
-          done();
+        .end((err, res) => {
+          expect(res).to.have.status(200);
         });
     });
 
-    it('should return 409', (done) => {
-      request(app).post(route)
-        .send(userForm).expect(409, done);
+    it('should return 409', async () => {
+      request(app)
+        .post(route)
+        .send(userForm)
+        .end((err, res) => {
+          expect(res).to.have.status(409);
+        });
     });
   });
 
   describe('GET /activate/:activationToken', () => {
-    const route: String = '/auth/activate';
-    const BAD_TOKEN: String = '123456789';
+    const route = '/auth/activate';
+    const BAD_TOKEN = '123456789';
 
-    it('should return 400', (done) => {
-      request(app).get(`${route}/${BAD_TOKEN}`)
-        .expect(400, done);
+    it('should return 400', async () => {
+      request(app)
+        .get(`${route}/${BAD_TOKEN}`)
+        .end((err, res) => {
+          expect(res).to.have.status(400);
+        });
     });
 
-    it('should return 200', (done) => {
-      request(app).get(`${route}/${user.activationToken}`)
-        .then(res => {
+    it('should return 200', async () => {
+      request(app)
+        .get(`${route}/${user.activationToken}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
           JWT = res.body.token;
-          expect(res.status).toEqual(200);
-          done();
         });
     });
   });
 
   describe('POST /login', () => {
-    const route: string = '/auth/login';
+    const route = '/auth/login';
 
-    it ('should return 401, missing password', (done) => {
-      request(app).post(route).send({email: 'some@email.com'})
-        .expect(401, done);
+    it('should return 401, missing password', async () => {
+      request(app)
+        .post(route)
+        .send({ email: 'some@email.com' })
+        .end((err, res) => {
+          expect(res).to.have.status(401);
+        });
     });
 
-    it('should return 401, missing email', (done) => {
-      request(app).post(route).send({password: 'somepassword'})
-        .expect(401, done);
+    it('should return 401, missing email', async () => {
+      request(app)
+        .post(route)
+        .send({ password: 'somepassword' })
+        .end((err, res) => {
+          expect(res).to.have.status(401);
+        });
     });
 
-    it('should return 404', (done) => {
-      request(app).post(route).send({email: 'none@nowhere.com', password: 'PASSWORD'})
-        .expect(404, done);
+    it('should return 404', async () => {
+      request(app)
+        .post(route)
+        .send({ email: 'none@nowhere.com', password: 'PASSWORD' })
+        .end((err, res) => {
+          expect(res).to.have.status(404);
+        });
     });
 
-    it('should return 200', (done) => {
-      request(app).post('/auth/login').send({email: 'tester@chester.com', password: 'PASSWORD'})
-        .expect(200, done);
+    it('should return 200', async () => {
+      request(app)
+        .post('/auth/login')
+        .send({ email: 'tester@chester.com', password: 'PASSWORD' })
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+        });
     });
   });
 });
 
 describe('GET /users', () => {
-  const route: string = '/users';
+  const route = '/users';
 
-  it('should return 401', (done) => {
-    request(app).get(route)
-      .expect(401, done());
+  it('should return 401', async () => {
+    request(app)
+      .get(route)
+      .end((err, res) => {
+        expect(res).to.have.status(401);
+      });
   });
 
-  it('should return 200', (done) => {
-    request(app).get(route)
+  it('should return 200', async () => {
+    request(app)
+      .get(route)
       .set('Authorization', `Bearer ${JWT}`)
-      .expect(200, done);
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+      });
   });
 });
