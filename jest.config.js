@@ -10,4 +10,6 @@ module.exports = {
   },
   testMatch: ['**/test/**/*.test.(ts|js)'],
   testEnvironment: 'node',
+  // preset: 'ts-jest', // use this if you are using TypeScript
+  // globalTeardown: './jest.global-teardown.js' // optional: will be called once after all tests are executed
 };

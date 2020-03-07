@@ -43,7 +43,7 @@ export const save = async (user: User): Promise<User> => {
  * @param activationToken
  * @returns {Promise<User>}
  */
-export const findOneAndUpdate = async (activationToken: string): Promise<User> => {
+export const findOneAndActivate = async (activationToken: string): Promise<User> => {
   const user = (await UserRepository.findOneAndUpdate(
     { activationToken: activationToken },
     { active: true },
@@ -86,7 +86,7 @@ export default {
   findByEmail,
   findByUsernameOrEmail,
   save,
-  findOneAndUpdate,
+  findOneAndActivate,
   findAll,
   deleteOne,
   comparePassword,
