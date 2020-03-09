@@ -1,7 +1,7 @@
-import { User } from '../models/user';
 import * as bcrypt from 'bcrypt-nodejs';
 import * as util from 'util';
-import UserRepository from '../schemas/user.schema';
+import { User } from '../types/user';
+import UserRepository from '../models/user.model';
 
 /**
  * @description Fetches single user from the storage by email

@@ -1,5 +1,13 @@
-import { AuthToken } from './auth-token';
-import { Profile } from './profile';
+export type AuthToken = {
+  accessToken: string;
+  kind: string;
+};
+
+export interface Profile {
+  info: string;
+  fname: string;
+  lname: string;
+}
 
 export interface User {
   email: string;
