@@ -8,9 +8,7 @@ import * as mongo from 'connect-mongo';
 import * as mongoose from 'mongoose';
 import * as bluebird from 'bluebird';
 import * as expressJwt from 'express-jwt';
-import * as swaggerUI from 'swagger-ui-express';
-import * as swaggerDocument from '../swagger.json';
-import { AuthRouter, SwaggerAPIRouter, UserRouter } from './routes';
+import router from './routes';
 import config from './config';
 
 const MongoStore = mongo(session);
@@ -90,13 +88,7 @@ app.use(function(
   }
 });
 
-app.use('/auth', AuthRouter);
-app.use('/users', UserRouter);
-/**
- * Add swagger endpoints
- */
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-app.use('/api/v1', SwaggerAPIRouter);
+app.use('/', router);
 
 app.use((req: express.Request, resp: express.Response) => {
   resp.status(404).send({
