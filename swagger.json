@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Typescript Node Rest-API Starter",
-    "description": "Typescript Node Rest-API Starter",
+    "description": "Typescript Node Rest-API Starter generated with Haskode by https://github.com/gpaoloni",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -29,21 +29,13 @@
       "in": "header"
     }
   },
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "paths": {
     "/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register new user in system",
         "description": "Register new user in system",
         "parameters": [
@@ -56,9 +48,7 @@
             }
           }
         ],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "New user is created",
@@ -77,9 +67,7 @@
     },
     "/auth/activate/{ACTIVATION_TOKEN}": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Activate user",
         "parameters": [
           {
@@ -113,9 +101,7 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "User Login",
         "description": "Login user in system",
         "parameters": [
@@ -123,10 +109,7 @@
             "name": "user",
             "in": "body",
             "schema": {
-              "required": [
-                "email",
-                "password"
-              ],
+              "required": ["email", "password"],
               "properties": {
                 "email": {
                   "type": "string"
@@ -138,9 +121,7 @@
             }
           }
         ],
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "User logged in successfully.",
@@ -164,9 +145,7 @@
     },
     "/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "Bearer": []
@@ -177,7 +156,16 @@
           "200": {
             "description": "List of users",
             "schema": {
-              "$ref": "#/definitions/Users"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "schema": {
+              "$ref": "#/definitions/UnAuthorized"
             }
           }
         }
@@ -186,14 +174,7 @@
   },
   "definitions": {
     "User": {
-      "required": [
-        "email",
-        "password",
-        "fname",
-        "lname",
-        "role",
-        "username"
-      ],
+      "required": ["email", "password", "fname", "lname", "role", "username"],
       "properties": {
         "email": {
           "type": "string",
@@ -216,22 +197,12 @@
         }
       }
     },
-    "Users": {
-      "type": "array",
-      "$ref": "#/definitions/User"
-    },
     "UnAuthorized": {
       "properties": {
         "msg": {
           "type": "array",
           "items": {
             "properties": {
-              "location": {
-                "type": "string"
-              },
-              "param": {
-                "type": "string"
-              },
               "msg": {
                 "type": "string"
               }

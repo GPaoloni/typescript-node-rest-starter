@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
-import * as util from 'util';
 import { User } from '../types/user';
 
 export type UserType = User & mongoose.Document;
@@ -9,7 +8,10 @@ const UserSchema = new mongoose.Schema(
   {
     email: { type: String, unique: true },
     username: String,
-    password: String,
+    password: {
+      type: String,
+      select: false,
+    },
     role: String,
 
     active: Boolean,
@@ -50,13 +52,6 @@ UserSchema.pre('save', function save(next) {
     });
   });
 });
-
-UserSchema.methods.comparePassword = function(
-  candidatePassword: string,
-): Promise<boolean> {
-  const qCompare = util.promisify(bcrypt.compare);
-  return qCompare(candidatePassword, this.password);
-};
 
 const UserRepository = mongoose.model<UserType>('User', UserSchema);
 export default UserRepository;

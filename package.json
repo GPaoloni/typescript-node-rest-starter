@@ -1,12 +1,12 @@
 {
   "name": "typescipt-node-rest-starter",
   "version": "0.1.0",
-  "description": "A starting point for Node.js REST API",
+  "description": "A starting point for Node.js REST API, based on github.com/maljukan/typescript-node-rest-starter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maljukan/typescript-node-rest-starter"
+    "url": "https://github.com/GPaoloni/typescript-node-rest-starter"
   },
-  "author": "Nenad Maljukan",
+  "author": "Paoloni Gianfranco",
   "license": "MIT",
   "scripts": {
     "start": "npm run build && npm run serve",

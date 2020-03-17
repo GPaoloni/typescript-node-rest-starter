@@ -74,12 +74,14 @@ export const deleteOne = async (username: string): Promise<void> => {
  * @param storedPassword
  * @returns {boolean}
  */
-export const comparePassword = (
+export const comparePassword = async (
+  email: string,
   candidatePassword: string,
-  storedPassword: string,
 ): Promise<boolean> => {
+  const user = await UserRepository.findOne({ email }).select('+password');
+  if (!user || !user.password) return false;
   const qCompare = util.promisify(bcrypt.compare);
-  return qCompare(candidatePassword, storedPassword);
+  return qCompare(candidatePassword, user.password);
 };
 
 export default {

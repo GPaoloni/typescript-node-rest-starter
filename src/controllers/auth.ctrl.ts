@@ -23,7 +23,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   if (!errors.isEmpty()) {
     res.status(401).send({
       msg: errors,
-      code: 406,
     });
 
     return;
@@ -33,15 +32,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       res.status(404).send({
         msg: 'User not found',
-        code: 404,
       });
 
       return;
     }
+
     const isSamePass = await UserService.comparePassword(
+      req.body.email,
       req.body.password,
-      user.password,
     );
+
     if (isSamePass) {
       const token = jwt.sign(
         {
@@ -56,7 +56,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     } else {
       res.status(401).send({
         msg: 'Unauthorized',
-        status: 401,
       });
 
       return;
@@ -65,7 +64,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // console.log(chalk.red(error));
     res.status(400).send({
       msg: error,
-      code: 400,
     });
   }
 };
@@ -85,8 +83,9 @@ export const registerValidator = [
     .notEmpty(),
   check('role', 'Role must be specified')
     .trim()
-    .notEmpty(),
-
+    .notEmpty()
+    .not()
+    .equals('admin'),
   check('email', 'Email is not valid')
     .isEmail()
     // eslint-disable-next-line @typescript-eslint/camelcase

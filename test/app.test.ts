@@ -42,6 +42,13 @@ describe('/auth', () => {
   describe('POST /register', () => {
     const route = '/auth/register';
 
+    it('should return 401', async () => {
+      const response = await request(app)
+        .post(route)
+        .send({ ...userForm, role: 'admin' })
+        .expect(401);
+    });
+
     it('should return 200', async () => {
       const response = await request(app)
         .post(route)

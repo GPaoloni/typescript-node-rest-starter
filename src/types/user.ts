@@ -26,6 +26,4 @@ export interface User {
   tokens?: Array<AuthToken>;
 
   profile?: Profile;
-
-  comparePassword: (candidatePassword: string) => Promise<boolean>;
 }

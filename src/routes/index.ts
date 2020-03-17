@@ -16,6 +16,7 @@ AuthRouter.post('/register', registerValidator, register);
 AuthRouter.get('/activate/:activationToken', activate);
 
 const UserRouter = Router();
+// this should be protected with an "isAdmin" middleware
 UserRouter.get('/', getAll);
 
 const SwaggerAPIRouter = Router();
