@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt-nodejs';
 import * as util from 'util';
-import { User } from '../types/user';
+import { User } from '../types';
 import UserRepository from '../models/user.model';
 
 /**

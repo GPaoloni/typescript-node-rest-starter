@@ -2,7 +2,7 @@
 import request = require('supertest');
 import app from '../src/server';
 import { default as UserService } from '../src/services/user.srvc';
-import { User } from '../src/types/user';
+import { User } from '../src/types';
 import * as chalk from 'chalk';
 
 let JWT: string;

@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt-nodejs';
-import { User } from '../types/user';
+import { User } from '../types';
 
 export type UserType = User & mongoose.Document;
 

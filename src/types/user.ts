@@ -1,15 +1,15 @@
-export type AuthToken = {
+type AuthToken = {
   accessToken: string;
   kind: string;
 };
 
-export interface Profile {
+interface Profile {
   info: string;
   fname: string;
   lname: string;
 }
 
-export interface User {
+export default interface User {
   email: string;
   password: string;
   username?: string;

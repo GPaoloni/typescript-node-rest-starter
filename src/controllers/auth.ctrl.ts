@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import * as util from 'util';
 import * as crypto from 'crypto';
-import * as nodemailer from 'nodemailer';
-import * as chalk from 'chalk';
+// import * as nodemailer from 'nodemailer';
+// import * as chalk from 'chalk';
 import { check, validationResult } from 'express-validator';
-import { User } from '../types/user';
+import { User } from '../types';
 import { UserService } from '../services';
 import config from '../config';
 

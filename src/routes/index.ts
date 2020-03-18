@@ -1,23 +1,8 @@
 import { Router } from 'express';
 import * as swaggerUI from 'swagger-ui-express';
 import * as swaggerDocument from '../../swagger.json';
-import {
-  login,
-  loginValidator,
-  register,
-  registerValidator,
-  activate,
-} from '../controllers/auth.ctrl';
-import { getAll } from '../controllers/user.ctrl';
-
-const AuthRouter = Router();
-AuthRouter.post('/login', loginValidator, login);
-AuthRouter.post('/register', registerValidator, register);
-AuthRouter.get('/activate/:activationToken', activate);
-
-const UserRouter = Router();
-// this should be protected with an "isAdmin" middleware
-UserRouter.get('/', getAll);
+import UserRouter from './user.router';
+import AuthRouter from './auth.router';
 
 const SwaggerAPIRouter = Router();
 
@@ -27,6 +12,9 @@ const router = Router();
  */
 router.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 router.use('/api/v1', SwaggerAPIRouter);
+/**
+ * Add api endpoints
+ */
 router.use('/auth', AuthRouter);
 router.use('/users', UserRouter);
 
