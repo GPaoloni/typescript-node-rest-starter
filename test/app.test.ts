@@ -4,6 +4,25 @@ import app from '../src/server';
 import { default as UserService } from '../src/services/user.srvc';
 import { User } from '../src/types';
 import * as chalk from 'chalk';
+import * as mongoose from 'mongoose';
+
+//Called hooks which runs before anything.
+beforeAll((done) => {
+  console.log(chalk.bgGreen('\n Server started \n'));
+  mongoose.connection.on('open', () => {
+    mongoose.connection.dropDatabase().then(() => {
+      console.log(chalk.bgGreen('\n\n Data base was cleared \n\n'));
+      done();
+    });
+  });
+});
+
+afterAll(async (done) => {
+  await UserService.deleteOne('testerchester');
+  app.close();
+  console.log(chalk.bgGreen('\n Server closed \n'));
+  done();
+});
 
 let JWT: string;
 // utility for logging a very visible message
@@ -15,16 +34,9 @@ const spit = (arg: string | {}): void => {
   }
 };
 
-afterAll(done => {
-  UserService.deleteOne('testerchester').then(done);
-  app.close();
-});
-
 describe('GET /random-url', () => {
   it('should return 401', async () => {
-    await request(app)
-      .get('/reset')
-      .expect(401);
+    await request(app).get('/reset').expect(401);
   });
 });
 
@@ -50,18 +62,12 @@ describe('/auth', () => {
     });
 
     it('should return 200', async () => {
-      const response = await request(app)
-        .post(route)
-        .send(userForm)
-        .expect(200);
+      const response = await request(app).post(route).send(userForm).expect(200);
       user = response.body;
     });
 
     it('should return 409', async () => {
-      await request(app)
-        .post(route)
-        .send(userForm)
-        .expect(409);
+      await request(app).post(route).send(userForm).expect(409);
     });
   });
 
@@ -70,9 +76,7 @@ describe('/auth', () => {
     const BAD_TOKEN = '123456789';
 
     it('should return 400', async () => {
-      await request(app)
-        .get(`${route}/${BAD_TOKEN}`)
-        .expect(400);
+      await request(app).get(`${route}/${BAD_TOKEN}`).expect(400);
     });
 
     it('should return 200', async () => {
@@ -120,9 +124,7 @@ describe('GET /users', () => {
   const route = '/users';
 
   it('should return 401', async () => {
-    const response = await request(app)
-      .get(route)
-      .expect(401);
+    const response = await request(app).get(route).expect(401);
   });
 
   it('should return 200', async () => {
