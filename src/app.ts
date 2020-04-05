@@ -73,7 +73,7 @@ app.use(
   }),
 );
 
-app.use(function(
+app.use(function (
   err: any,
   req: express.Request,
   res: express.Response,
